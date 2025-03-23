@@ -2,44 +2,50 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <!-- This meta tag is essential for responsive behavior on mobile devices -->
+  <!-- This meta tag ensures proper scaling on mobile devices -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Daily Task Calendar</title>
   <style>
+    /* Reset margins and padding; use border-box for sizing */
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    html, body {
+      width: 100%;
+      overflow-x: hidden;
     }
     body {
       font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
       background: #f0f0f0;
     }
     h1 {
       text-align: center;
-      padding: 20px;
+      padding: 10px;
     }
-    /* Calendar Container fills full width */
+    /* Calendar container takes full width of viewport */
     #calendar {
       width: 100%;
+      max-width: 100%;
       margin: 0 auto;
       background: white;
-      padding: 20px;
+      padding: 10px;
       border-radius: 6px;
     }
     .month {
       text-align: center;
       margin-bottom: 10px;
-      font-size: 1.5em;
+      font-size: 1.2em;
       font-weight: bold;
     }
-    /* Use a flexible grid that allows cells to shrink */
+    /* Calendar grid: 7 equal columns that shrink with available space */
     .calendar-grid {
       display: grid;
-      grid-template-columns: repeat(7, minmax(0, 1fr));
-      gap: 10px;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
     }
-    /* Day Cells: aspect-ratio keeps them square */
+    /* Day cells: maintain square shape with aspect-ratio and shrink if needed */
     .day {
       background-color: red;
       color: white;
@@ -48,8 +54,10 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      aspect-ratio: 1;
-      font-size: 1.2em;
+      aspect-ratio: 1; /* Keeps the cell square */
+      font-size: 1em;
+      /* Ensure cells can shrink if necessary */
+      min-width: 0;
     }
     .day.green {
       background-color: green;
@@ -63,16 +71,14 @@
       font-size: 1em;
       cursor: pointer;
     }
-    /* Adjust styling for smaller screens */
-    @media (max-width: 500px) {
-      #calendar {
-        padding: 10px;
-      }
-      .calendar-grid {
-        gap: 5px;
-      }
-      .day {
+    /* Media query for very small screens */
+    @media (max-width: 400px) {
+      .month {
         font-size: 1em;
+      }
+      button {
+        font-size: 0.9em;
+        padding: 4px 8px;
       }
     }
   </style>
@@ -82,19 +88,27 @@
   <div id="calendar"></div>
 
   <script>
+    // Set up initial month and year based on current date
     const currentDate = new Date();
-    let currentMonth = currentDate.getMonth();
+    let currentMonth = currentDate.getMonth(); // 0-11
     let currentYear = currentDate.getFullYear();
     const calendarContainer = document.getElementById('calendar');
 
+    // Render the calendar for a specific month and year
     function renderCalendar(month, year) {
       calendarContainer.innerHTML = '';
-      const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+      // Create and display month header
+      const monthNames = [
+        'January','February','March','April','May','June',
+        'July','August','September','October','November','December'
+      ];
       const monthDiv = document.createElement('div');
       monthDiv.className = 'month';
       monthDiv.textContent = `${monthNames[month]} ${year}`;
       calendarContainer.appendChild(monthDiv);
 
+      // Create navigation buttons
       const navDiv = document.createElement('div');
       navDiv.style.textAlign = 'center';
       const prevButton = document.createElement('button');
@@ -107,16 +121,19 @@
       navDiv.appendChild(nextButton);
       calendarContainer.appendChild(navDiv);
 
+      // Create the grid for days
       const calendarGrid = document.createElement('div');
       calendarGrid.className = 'calendar-grid';
 
+      // Determine number of days and the starting weekday of the month
       const daysInMonth = new Date(year, month + 1, 0).getDate();
       const firstDayOfWeek = new Date(year, month, 1).getDay();
+      // Add empty cells for days before the 1st
       for (let i = 0; i < firstDayOfWeek; i++) {
         const emptyCell = document.createElement('div');
         calendarGrid.appendChild(emptyCell);
       }
-
+      // Add day cells to the calendar
       for (let dayNum = 1; dayNum <= daysInMonth; dayNum++) {
         const dayDiv = document.createElement('div');
         dayDiv.className = 'day';
@@ -131,6 +148,7 @@
       calendarContainer.appendChild(calendarGrid);
     }
 
+    // Toggle the "done" status of a day
     function toggleDayStatus(key, dayElement) {
       if (dayElement.classList.contains('green')) {
         dayElement.classList.remove('green');
@@ -141,6 +159,7 @@
       }
     }
 
+    // Change the displayed month
     function changeMonth(offset) {
       currentMonth += offset;
       if (currentMonth < 0) {
@@ -153,6 +172,7 @@
       renderCalendar(currentMonth, currentYear);
     }
 
+    // Initial render of the calendar
     renderCalendar(currentMonth, currentYear);
   </script>
 </body>
