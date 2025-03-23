@@ -1,0 +1,49 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+  padding: 0;
+  background: #f0f0f0;
+}
+
+h1 {
+  text-align: center;
+}
+
+#calendar {
+  display: inline-block;
+  background: white;
+  padding: 20px;
+  border-radius: 6px;
+  margin: auto;
+}
+
+.month {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 40px); /* 7 days per row, each day ~ 40px wide */
+  gap: 5px;
+  justify-content: center;
+}
+
+.day {
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  cursor: pointer;
+  background-color: red; /* By default, days are red (not done) */
+  color: white;
+  border-radius: 4px;
+}
+
+.day.green {
+  background-color: green;
+}
+
+.day:hover {
+  opacity: 0.8;
+}
