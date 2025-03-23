@@ -32,7 +32,7 @@
     /* Calendar container takes full width of viewport */
     #calendar {
       width: 100%;
-      max-width: 600px; /* Limit the max width to make it more responsive */
+      max-width: 100%;
       margin: 0 auto;
       background: white;
       padding: 10px;
@@ -76,8 +76,8 @@
       font-size: 1em;
       cursor: pointer;
     }
-    /* Media query for very small screens */
-    @media (max-width: 400px) {
+    /* Media query for small screens */
+    @media (max-width: 600px) {
       .month {
         font-size: 1em;
       }
@@ -89,7 +89,116 @@
         font-size: 0.8em; /* Smaller font size for smaller screens */
       }
     }
-    /* Media query for medium screens */
-    @media (max-width: 600px) {
+    @media (max-width: 400px) {
+      .month {
+        font-size: 0.8em;
+      }
+      button {
+        font-size: 0.8em;
+        padding: 3px 6px;
+      }
       .day {
-        font-size* ▋
+        font-size: 0.7em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Daily Task Calendar</h1>
+  <div id="calendar"></div>
+
+  <script>
+    // Set up initial month and year based on current date
+    const currentDate = new Date();
+    let currentMonth = currentDate.getMonth(); // 0-11
+    let currentYear = currentDate.getFullYear();
+    const calendarContainer = document.getElementById('calendar');
+
+    // Render the calendar for a specific month and year
+    function renderCalendar(month, year) {
+      calendarContainer.innerHTML = '';
+
+      // Create and display month header
+      const monthNames = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+      ];
+      const monthDiv = document.createElement('div');
+      monthDiv.className = 'month';
+      monthDiv.textContent = `${monthNames[month]} ${year}`;
+      calendarContainer.appendChild(monthDiv);
+
+      // Create navigation buttons
+      const navDiv = document.createElement('div');
+      navDiv.style.textAlign = 'center';
+      const prevButton = document.createElement('button');
+      prevButton.textContent = 'Previous';
+      prevButton.addEventListener('click', () => changeMonth(-1));
+      const nextButton = document.createElement('button');
+      nextButton.textContent = 'Next';
+      nextButton.addEventListener('click', () => changeMonth(1));
+      navDiv.appendChild(prevButton);
+      navDiv.appendChild(nextButton);
+      calendarContainer.appendChild(navDiv);
+
+      // Create the grid for days
+      const calendarGrid = document.createElement('div');
+      calendarGrid.className = 'calendar-grid';
+
+      // Determine number of days and the starting weekday of the month
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const firstDayOfWeek = new Date(year, month, 1).getDay();
+      // Add empty cells for days before the 1st
+      for (let i = 0; i < firstDayOfWeek; i++) {
+        const emptyCell = document.createElement('div');
+        calendarGrid.appendChild(emptyCell);
+      }
+      // Add day cells to the calendar
+      for (let dayNum = 1; dayNum <= daysInMonth; dayNum++) {
+        const dayDiv = document.createElement('div');
+        dayDiv.className = 'day';
+        dayDiv.textContent = dayNum;
+        const dayKey = `${year}-${month + 1}-${dayNum}`;
+        if (localStorage.getItem(dayKey) === 'done') {
+          dayDiv.classList.add('green');
+        }
+        dayDiv.addEventListener('click', () => toggleDayStatus(dayKey, dayDiv));
+        calendarGrid.appendChild(dayDiv);
+      }
+      calendarContainer.appendChild(calendarGrid);
+    }
+
+    // Toggle the "done" status of a day
+    function toggleDayStatus(key, dayElement) {
+      if (dayElement.classList.contains('green')) {
+        dayElement.classList.remove('green');
+        localStorage.removeItem(key);
+      } else {
+        dayElement.classList.add('green');
+        localStorage.setItem(key, 'done');
+      }
+    }
+
+    // Change the displayed month
+    function changeMonth(offset) {
+      currentMonth += offset;
+      if (currentMonth < 0) {
+        currentMonth = 11;
+        currentYear--;
+      } else if (currentMonth > 11) {
+        currentMonth = 0;
+        currentYear++;
+      }
+      renderCalendar(currentMonth, currentYear);
+    }
+
+    // Initial render of the calendar
+    renderCalendar(currentMonth, currentYear);
+
+    // Handle window resize event
+    window.addEventListener('resize', () => {
+      renderCalendar(currentMonth, currentYear);
+    });
+  </script>
+</body>
+</html>
