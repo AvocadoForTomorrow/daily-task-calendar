@@ -4,20 +4,24 @@
   <meta charset="UTF-8">
   <title>Daily Task Calendar</title>
   <style>
+    /* Ensure padding and borders are included in element's width/height */
+    * {
+      box-sizing: border-box;
+    }
     /* Global Styles */
     body {
       font-family: Arial, sans-serif;
-      margin: 20px;
+      margin: 0;
       padding: 0;
       background: #f0f0f0;
     }
     h1 {
       text-align: center;
+      padding: 20px;
     }
-    /* Calendar Container */
+    /* Calendar Container now fills full width */
     #calendar {
-      width: 90%;
-      max-width: 800px;
+      width: 100%;         /* Use the full browser width */
       margin: 0 auto;
       background: white;
       padding: 20px;
@@ -29,14 +33,13 @@
       font-size: 1.5em;
       font-weight: bold;
     }
-    /* Responsive Calendar Grid */
+    /* Responsive Calendar Grid: 7 equal columns */
     .calendar-grid {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
       gap: 10px;
-      justify-content: center;
     }
-    /* Day Cells */
+    /* Day Cells: using aspect-ratio to keep them square */
     .day {
       background-color: red;
       color: white;
@@ -45,7 +48,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      aspect-ratio: 1; /* Keeps each cell square */
+      aspect-ratio: 1; /* Ensures each cell remains a square */
       font-size: 1.2em;
     }
     .day.green {
@@ -173,3 +176,4 @@
   </script>
 </body>
 </html>
+
