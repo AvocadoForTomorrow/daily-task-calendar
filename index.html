@@ -32,7 +32,7 @@
     /* Calendar container takes full width of viewport */
     #calendar {
       width: 100%;
-      max-width: 100%;
+      max-width: 600px; /* Limit the max width to make it more responsive */
       margin: 0 auto;
       background: white;
       padding: 10px;
@@ -85,25 +85,11 @@
         font-size: 0.9em;
         padding: 4px 8px;
       }
+      .day {
+        font-size: 0.8em; /* Smaller font size for smaller screens */
+      }
     }
-  </style>
-</head>
-<body>
-  <h1>Daily Task Calendar</h1>
-  <div id="calendar"></div>
-
-  <script>
-    // Set up initial month and year based on current date
-    const currentDate = new Date();
-    let currentMonth = currentDate.getMonth(); // 0-11
-    let currentYear = currentDate.getFullYear();
-    const calendarContainer = document.getElementById('calendar');
-
-    // Render the calendar for a specific month and year
-    function renderCalendar(month, year) {
-      calendarContainer.innerHTML = '';
-
-      // Create and display month header
-      const monthNames = [
-        'January', 'February', 'March', 'April', 'May', 'June',
-        'July', '](#)* ▋
+    /* Media query for medium screens */
+    @media (max-width: 600px) {
+      .day {
+        font-size* ▋
