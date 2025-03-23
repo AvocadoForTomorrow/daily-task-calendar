@@ -1,15 +1,175 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Daily Task Calendar</title>
-  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Global Styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      padding: 0;
+      background: #f0f0f0;
+    }
+    h1 {
+      text-align: center;
+    }
+    /* Calendar Container */
+    #calendar {
+      width: 90%;
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 6px;
+    }
+    .month {
+      text-align: center;
+      margin-bottom: 10px;
+      font-size: 1.5em;
+      font-weight: bold;
+    }
+    /* Responsive Calendar Grid */
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+      justify-content: center;
+    }
+    /* Day Cells */
+    .day {
+      background-color: red;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      aspect-ratio: 1; /* Keeps each cell square */
+      font-size: 1.2em;
+    }
+    .day.green {
+      background-color: green;
+    }
+    .day:hover {
+      opacity: 0.8;
+    }
+    /* Navigation Buttons */
+    button {
+      margin: 5px;
+      padding: 5px 10px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
   <h1>Daily Task Calendar</h1>
-
   <div id="calendar"></div>
 
-  <script src="script.js"></script>
+  <script>
+    // Set up initial month and year based on current date
+    const currentDate = new Date();
+    let currentMonth = currentDate.getMonth();  // 0-11
+    let currentYear = currentDate.getFullYear();
+    const calendarContainer = document.getElementById('calendar');
+
+    // Render the calendar for a specific month and year
+    function renderCalendar(month, year) {
+      calendarContainer.innerHTML = '';
+
+      // Create and display month header
+      const monthNames = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+      ];
+      const monthDiv = document.createElement('div');
+      monthDiv.className = 'month';
+      monthDiv.textContent = `${monthNames[month]} ${year}`;
+      calendarContainer.appendChild(monthDiv);
+
+      // Create navigation buttons
+      const navDiv = document.createElement('div');
+      navDiv.style.textAlign = 'center';
+
+      const prevButton = document.createElement('button');
+      prevButton.textContent = 'Previous';
+      prevButton.addEventListener('click', () => {
+        changeMonth(-1);
+      });
+
+      const nextButton = document.createElement('button');
+      nextButton.textContent = 'Next';
+      nextButton.addEventListener('click', () => {
+        changeMonth(1);
+      });
+
+      navDiv.appendChild(prevButton);
+      navDiv.appendChild(nextButton);
+      calendarContainer.appendChild(navDiv);
+
+      // Create the grid for days
+      const calendarGrid = document.createElement('div');
+      calendarGrid.className = 'calendar-grid';
+
+      // Determine number of days and the starting weekday of the month
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const firstDayOfWeek = new Date(year, month, 1).getDay(); // 0 (Sun) - 6 (Sat)
+
+      // Add empty cells for days before the 1st of the month
+      for (let i = 0; i < firstDayOfWeek; i++) {
+        const emptyCell = document.createElement('div');
+        calendarGrid.appendChild(emptyCell);
+      }
+
+      // Add day cells to the calendar
+      for (let dayNum = 1; dayNum <= daysInMonth; dayNum++) {
+        const dayDiv = document.createElement('div');
+        dayDiv.className = 'day';
+        dayDiv.textContent = dayNum;
+
+        // Use a unique key for each day
+        const dayKey = `${year}-${month}-${dayNum}`;
+        if (localStorage.getItem(dayKey) === 'done') {
+          dayDiv.classList.add('green');
+        }
+
+        // Toggle day status on click
+        dayDiv.addEventListener('click', () => {
+          toggleDayStatus(dayKey, dayDiv);
+        });
+
+        calendarGrid.appendChild(dayDiv);
+      }
+      calendarContainer.appendChild(calendarGrid);
+    }
+
+    // Toggle the "done" status of a day
+    function toggleDayStatus(key, dayElement) {
+      if (dayElement.classList.contains('green')) {
+        dayElement.classList.remove('green');
+        localStorage.removeItem(key);
+      } else {
+        dayElement.classList.add('green');
+        localStorage.setItem(key, 'done');
+      }
+    }
+
+    // Change the displayed month
+    function changeMonth(offset) {
+      currentMonth += offset;
+      if (currentMonth < 0) {
+        currentMonth = 11;
+        currentYear--;
+      } else if (currentMonth > 11) {
+        currentMonth = 0;
+        currentYear++;
+      }
+      renderCalendar(currentMonth, currentYear);
+    }
+
+    // Initial render of the calendar
+    renderCalendar(currentMonth, currentYear);
+  </script>
 </body>
 </html>
