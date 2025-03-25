@@ -46,7 +46,7 @@
     }
     /* Day cells:
        We use the padding hack to maintain a square cell.
-       The cell is position: relative, and a pseudo-element creates a square aspect */
+       The cell is positioned relative, and a pseudo-element creates a square aspect */
     .day {
       background-color: red;
       color: white;
@@ -56,19 +56,20 @@
       font-size: 1em;
       overflow: hidden;
     }
-    .day.green {
-      background-color: green;
+    /* When marked as done, the cell no longer shows a red background */
+    .day.done {
+      background-color: white;
     }
     .day:hover {
       opacity: 0.8;
     }
-    /* The pseudo-element ensures each cell is square */
+    /* Pseudo-element to force square cells */
     .day::before {
       content: "";
       display: block;
       padding-top: 100%;
     }
-    /* The actual content of the cell is placed absolutely */
+    /* The actual content of the cell is positioned absolutely */
     .day-content {
       position: absolute;
       top: 0;
@@ -78,6 +79,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      width: 100%;
+      height: 100%;
     }
     /* Navigation buttons styling */
     button {
@@ -151,6 +154,9 @@
       for (let dayNum = 1; dayNum <= daysInMonth; dayNum++) {
         const dayDiv = document.createElement('div');
         dayDiv.className = 'day';
+        // Store the original day number in a data attribute
+        dayDiv.dataset.day = dayNum;
+        
         // Create a content container inside the day
         const dayContent = document.createElement('div');
         dayContent.className = 'day-content';
@@ -159,7 +165,9 @@
         
         const dayKey = `${year}-${month}-${dayNum}`;
         if (localStorage.getItem(dayKey) === 'done') {
-          dayDiv.classList.add('green');
+          dayDiv.classList.add('done');
+          dayContent.textContent = '😊';
+          dayContent.style.fontSize = '3em';
         }
         dayDiv.addEventListener('click', () => toggleDayStatus(dayKey, dayDiv));
         calendarGrid.appendChild(dayDiv);
@@ -168,12 +176,18 @@
     }
 
     function toggleDayStatus(key, dayElement) {
-      if (dayElement.classList.contains('green')) {
-        dayElement.classList.remove('green');
+      const dayContent = dayElement.querySelector('.day-content');
+      if (dayElement.classList.contains('done')) {
+        dayElement.classList.remove('done');
         localStorage.removeItem(key);
+        // Revert to the original day number
+        dayContent.textContent = dayElement.dataset.day;
+        dayContent.style.fontSize = '';
       } else {
-        dayElement.classList.add('green');
+        dayElement.classList.add('done');
         localStorage.setItem(key, 'done');
+        dayContent.textContent = '😊';
+        dayContent.style.fontSize = '3em';
       }
     }
 
